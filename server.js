@@ -40,6 +40,19 @@ app.get('/todos',function(req,res){
 	}else if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'false'){
 		filteredTodos = _.where(filteredTodos,{completed:false});
 	}
+
+	if(queryParams.hasOwnProperty('q') && queryParams.q.length > 0){
+
+			filteredTodos = _.filter(filteredTodos,function(obj){
+				//console.log('description = '+obj.description);
+				//console.log('queryParams = '+queryParams.q);
+
+				if(obj.description.toLowerCase().indexOf(queryParams.q)>-1){
+				//	console.log('ysssss '+obj.description);
+					return obj;
+				}
+		})
+	}
 	//filteredTodos = _.where(filteredTodos,{completed:false});
 
 	res.json(filteredTodos);
