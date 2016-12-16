@@ -1,6 +1,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var db = require('./db.js');
+
 
 
 var app = express();
@@ -93,6 +95,52 @@ app.get('/todos/:id', function(req, res) {
 
 app.post('/todos', function(req, res) {
 
+	/*
+	//tutorial code
+
+	var body = req.body;
+	body = _.pick(body, 'description', 'completed');
+
+	
+	db.todo.create(body).then(function(todo){
+
+		res.json(todo.toJSON());
+	},function(e){
+
+		res.status(400).json(e);
+	});
+
+	*/
+
+
+	//my attempt using actual DB(working)
+
+	var body = req.body;
+	body = _.pick(body, 'description', 'completed');
+
+	console.log(body);
+
+	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
+		return res.status(400).send();
+	}
+
+	console.log('Inserting using DB \n '+body.description+' \n'+body.completed);
+	
+	db.todo.create({ 
+		description : body.description.trim(),
+		completed : body.completed
+	}).then(function(todo){
+		if(todo){
+			res.status(200).json(todo);
+		}else{
+			res.status(400).json(e);
+		}
+	});
+
+	//without using db
+
+	/*
+
 	var body = req.body;
 
 	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
@@ -104,11 +152,11 @@ app.post('/todos', function(req, res) {
 
 	//trim the space from description
 	body.description = body.description.trim();
-	/*var todo = {
-		id : todoNextId,
-		description : body.description,
-		completed : body.completed
-	};*/
+	//var todo = {
+	//	id : todoNextId,
+	//	description : body.description,
+	//	completed : body.completed
+	//};
 
 
 
@@ -120,6 +168,8 @@ app.post('/todos', function(req, res) {
 	console.log('description ' + body.description);
 
 	res.json(body);
+
+	*/
 });
 
 //Delete /todos/:id
@@ -181,6 +231,9 @@ app.put('/todos/:id', function(req, res) {
 
 });
 
-app.listen(PORT, function() {
-	console.log('express listening on port ' + PORT);
+db.sequelize.sync().then(function(){
+		app.listen(PORT, function() {
+		console.log('express listening on port ' + PORT);
+	});
 });
+
