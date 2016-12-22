@@ -287,7 +287,39 @@ app.delete('/todos/:id', function(req, res) {
 
 app.put('/todos/:id', function(req, res) {
 
+	//with db
+
 	var body = req.body;
+	body = _.pick(body, 'description', 'completed');
+	var attributes = {};
+	var todoId = parseInt(req.params.id, 10);
+	
+
+	if (body.hasOwnProperty('completed')) {
+		attributes.completed = body.completed;
+	}
+
+	if (body.hasOwnProperty('description')) {
+		attributes.description = body.description;
+	} 
+
+	db.todo.findById(todoId).then(function(todo){
+		if(todo){
+				todo.update(attributes).then(function(todo){
+				res.json(todo.toJSON());
+			},function(e){
+				res.status(400).json(e);
+			})
+		}else{
+			res.status(404).send();
+		}
+	},function(){
+		res.status(500).send();
+	});
+
+	//without db
+
+	/*var body = req.body;
 
 	body = _.pick(body, 'description', 'completed');
 
@@ -321,6 +353,7 @@ app.put('/todos/:id', function(req, res) {
 
 	res.json(matchedTodo);
 
+	*/
 });
 
 db.sequelize.sync().then(function(){
