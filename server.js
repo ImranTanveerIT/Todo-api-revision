@@ -1,4 +1,4 @@
-var express = require('express');
+ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
@@ -229,6 +229,47 @@ app.delete('/todos/:id', function(req, res) {
 
 	var todoId = parseInt(req.params.id, 10);
 
+	//tutorial code
+	db.todo.destroy({
+		where : {
+			id :todoId
+		}
+	}).then(function(deletedRow){
+		if(deletedRow === 0){
+			res.send(404).json({
+				error : 'record not found'
+			});
+		}else{
+			res.status(204).send();
+		}
+	},function(){
+		res.status(500).send();
+	});	
+
+	//my attempt, deletion working fine but not returning the deleted data and tutorial used some other function too
+	/*db.todo.findById(todoId).then(function(todo){
+		if(!!todo){
+				db.todo.truncate({    	//fetch all items where completed = false
+				where : {
+					id: todoId
+				}
+			}).then(function(todo){
+				res.status(200).json(todo);
+			});
+
+		}else{
+			res.status(404).send();
+		}
+	},function(e){
+		res.status(500).json(e)
+	});*/
+
+
+
+	//without db
+	/*
+	var todoId = parseInt(req.params.id, 10);
+
 	//get the item by id using _ lib
 	var matchedTodo = _.findWhere(todos, {
 		id: todoId
@@ -237,7 +278,7 @@ app.delete('/todos/:id', function(req, res) {
 	todos = _.without(todos, matchedTodo);
 
 	res.json(matchedTodo);
-
+	*/
 
 });
 

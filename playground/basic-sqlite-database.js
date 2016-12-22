@@ -35,7 +35,7 @@ sequelize.sync().then(function(){
 			description : 'Clean office'
 		}); 
 	}).then(function(){ 
-		//return Todo.findById(40); //fetch item by id =1
+		//return Todo.findById(40); //fetch item by id =1  
 		return Todo.findAll({    	//fetch all items where completed = false
 			where : {
 				//completed : false   //search by completed status
