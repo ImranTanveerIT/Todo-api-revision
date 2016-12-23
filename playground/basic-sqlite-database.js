@@ -22,12 +22,25 @@ var Todo = sequelize.define('todo',{
 	}
 });
 
+var User = sequelize.define('user',{
+
+		email : Sequelize.STRING
+	});
+
+	
+Todo.belongsTo(User);
+User.hasMany(Todo); 
+
 //lecture 66
-sequelize.sync().then(function(){
+sequelize.sync({force:true}).then(function(){
 
 	console.log('everything is synced');
 
-	Todo.create({ //insert an item in db
+	
+ 
+
+
+	/*Todo.create({ //insert an item in db
 		description : 'walk the dog',
 		completed : false
 	}).then(function(todo){ //insert 2nd item
@@ -56,5 +69,5 @@ sequelize.sync().then(function(){
 		}
 	}).catch(function(e){
 		console.log(e);
-	});
+	});*/
 });

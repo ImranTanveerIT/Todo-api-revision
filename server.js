@@ -148,27 +148,27 @@ app.get('/todos/:id',middleware.requireAuthentication, function(req, res) {
 
 app.post('/todos',middleware.requireAuthentication, function(req, res) {
 
-	/*
+	 
 	//tutorial code
 
 	var body = req.body;
 	body = _.pick(body, 'description', 'completed');
-
-	
 	db.todo.create(body).then(function(todo){
-
-		res.json(todo.toJSON());
+		req.user.addTodo(todo).then(function(){
+			return todo.reload();
+		}).then(function(todo){
+			res.json(todo.toJSON());
+		});
 	},function(e){
-
 		res.status(400).json(e);
 	});
 
-	*/
+	
 
 
 	//my attempt using actual DB(working)
 
-	var body = req.body;
+	/*var body = req.body;
 	body = _.pick(body, 'description', 'completed');
 
 	console.log(body);
@@ -188,7 +188,7 @@ app.post('/todos',middleware.requireAuthentication, function(req, res) {
 		}else{
 			res.status(400).json(e);
 		}
-	});
+	});*/
 
 	//without using db
 
