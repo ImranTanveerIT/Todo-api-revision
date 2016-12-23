@@ -1,8 +1,9 @@
- var express = require('express');
+var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
 var bcrypt = require('bcrypt');
+var middleware = require('./middleware.js')(db); 
 
 
 
@@ -33,7 +34,7 @@ app.get('/', function(req, res) {
 });
 
 //Get /todos
-app.get('/todos', function(req, res) {
+app.get('/todos',middleware.requireAuthentication, function(req, res) {
 
 	//with db
 	var query = req.query;
@@ -92,7 +93,7 @@ app.get('/todos', function(req, res) {
 });
 
 //Get /todos/:id
-app.get('/todos/:id', function(req, res) {
+app.get('/todos/:id',middleware.requireAuthentication, function(req, res) {
 
 	var todoId = parseInt(req.params.id, 10);
 
@@ -145,7 +146,7 @@ app.get('/todos/:id', function(req, res) {
 
 //Post  /todo
 
-app.post('/todos', function(req, res) {
+app.post('/todos',middleware.requireAuthentication, function(req, res) {
 
 	/*
 	//tutorial code
@@ -226,7 +227,7 @@ app.post('/todos', function(req, res) {
 
 //Delete /todos/:id
 
-app.delete('/todos/:id', function(req, res) {
+app.delete('/todos/:id',middleware.requireAuthentication, function(req, res) {
 
 	var todoId = parseInt(req.params.id, 10);
 
@@ -286,7 +287,7 @@ app.delete('/todos/:id', function(req, res) {
 
 // Put /todos/:id
 
-app.put('/todos/:id', function(req, res) {
+app.put('/todos/:id',middleware.requireAuthentication, function(req, res) {
 
 	//with db
 
@@ -382,7 +383,7 @@ app.post('/users/login',function(req,res){
 	db.user.authenticate(body).then(function(user){ 
 		var token = user.generateToken('authentication');
 		if(token){
-			res.header('Auth',token).json(user.toPublicJSON());	
+			res.header('Auth',token  ).json(user.toPublicJSON());	
 		}else{
 			res.status(401).send();
 		}
