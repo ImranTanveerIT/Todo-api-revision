@@ -318,7 +318,7 @@ app.put('/todos/:id',middleware.requireAuthentication, function(req, res) {
 			where : {
 				id: todoId,
 			    userId: req.user.get('id')
-			}.then(function(todo){
+			} .then(function(todo){
 		if(todo){
 				todo.update(attributes).then(function(todo){
 				res.json(todo.toJSON());
@@ -406,7 +406,7 @@ app.post('/users/login',function(req,res){
 	});
 });
 
-db.sequelize.sync().then(function(){
+db.sequelize.sync({force:true}).then(function(){
 		app.listen(PORT, function() {
 		console.log('express listening on port ' + PORT);
 	});
