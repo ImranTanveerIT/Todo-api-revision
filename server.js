@@ -243,7 +243,7 @@ app.delete('/todos/:id',middleware.requireAuthentication, function(req, res) {
 	db.todo.destroy({
 		where : {
 			id :todoId,
-			userId: req.user.get('id');
+			userId: req.user.get('id')
 		}
 	}).then(function(deletedRow){
 		if(deletedRow === 0){
@@ -318,7 +318,8 @@ app.put('/todos/:id',middleware.requireAuthentication, function(req, res) {
 			where : {
 				id: todoId,
 			    userId: req.user.get('id')
-			} .then(function(todo){
+			}
+	}).then(function(todo){
 		if(todo){
 				todo.update(attributes).then(function(todo){
 				res.json(todo.toJSON());
