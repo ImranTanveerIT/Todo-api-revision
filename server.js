@@ -384,11 +384,23 @@ app.post('/users',function(req,res){
 
 })
 
+// DELETE /users/login
+app.delete('/users/login',middleware.requireAuthentication,function(req,res){
+
+	req.token.destroy().then(function(){
+		res.status(204).send();
+	}).catch(function(){
+		res.status(500).send();
+	});
+});
+
+
 
 //lecture 76
 app.post('/users/login',function(req,res){
 
 	var body = _.pick(req.body,'email','password');
+	var userInstance;
 
 	/*
 		authenticate is our own made method and the code inside it was initially here and then moved in
@@ -396,13 +408,24 @@ app.post('/users/login',function(req,res){
 	*/
 	db.user.authenticate(body).then(function(user){ 
 		var token = user.generateToken('authentication');
-		if(token){
+		userInstance = user;
+
+		//saving token in db
+		return db.token.create({
+			token:token
+		});
+
+		//this is commented in lecture 84 bcz now the token will be saved in db in hashed form which will be used in
+		// logging out user
+		/*if(token){
 			res.header('Auth',token  ).json(user.toPublicJSON());	
 		}else{
 			res.status(401).send();
-		}
+		}*/
 		
-	},function(e){
+	}).then(function(tokenIntance){
+		res.header('Auth',tokenIntance.get('token')).json(userInstance.toPublicJSON());	
+	}).catch(function(){
 		res.status(401).send();
 	});
 });
